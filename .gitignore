@@ -1,6 +1,6 @@
 node_modules
 tmp
-application/config/email.php
+application/config/config.php
 application/config/database.php
 *.patch
 patches/
@@ -18,3 +18,4 @@ git-svn-diff.py
 *.log
 application/sessions/*
 /nbproject/
+soporte_soluciones_db.sql
