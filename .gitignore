@@ -19,3 +19,4 @@ application/sessions/*
 /nbproject/
 soporte_soluciones_db.sql
 application/config/config.php
+system/core/Common.php
