@@ -15,7 +15,6 @@
 |
 */
 $config['base_url']	= 'http://app.soporte-soluciones.com.mx';
-
 /*
 |--------------------------------------------------------------------------
 | Index File
