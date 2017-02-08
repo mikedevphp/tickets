@@ -18,5 +18,3 @@ git-svn-diff.py
 application/sessions/*
 /nbproject/
 soporte_soluciones_db.sql
-application/config/config.php
-application/config/config.php
