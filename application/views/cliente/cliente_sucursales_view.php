@@ -8,7 +8,6 @@
 <script src="<?= base_url('css/js/modalsucursales.js') ?>"></script>
  
 <div class="row-fluid">
-    
     <?php
     
         if(isset($sucursales))
@@ -17,14 +16,16 @@
             
             echo "<table class ='table table-bordered table-condensed'>
             <thead><tr><th class='alert alert-info'>CR de Tienda</th><th class='alert alert-info'>Nombre de sucursal</th><th class='alert alert-info'>Ciudad</th>
-            <th class='alert alert-info'>Fracc/Colonia</th><th class='alert alert-info'>Calle</th><th class='alert alert-info'>Telefono</th><th class='alert alert-info'>Telefono Celular</th>
+            <th class='alert alert-info'>Fracc/Colonia</th><th class='alert alert-info'>Calle</th><th class='alert alert-info'>Telefono</th>
+            <th class='alert alert-info'>Inventario</th>
             <th class='alert alert-info'>Editar</th><th class='alert alert-info'>Eliminar</th></tr></thead><tbody>";
             
             foreach($sucursales as $row)
             { 
                 echo "<tr><td>".$row->id_sucursal."</td><td>".$row->nombre_sucursal."</td><td>".
                       $row->ciudad_suc."</td><td>".$row->fracc_colonia_suc."</td><td>".
-                       $row->direccion."</td><td>".$row->telefono."</td><td>".$row->telefono_cel_suc."</td>
+                       $row->direccion."</td><td>".$row->telefono."</td>
+                      <td><a class='btn-small btn-info'  href=".base_url('index.php/inventario/sucursal/'.$row->id_sucursal)."><i class='icon-eye-open icon-white'></a></td>
                        <td><a class='btn-small btn-warning' href='#modalEditarSucursal' editarsuc='' data-toggle ='modal' numsuc='".$row->id_sucursal."'
                       idcliente='".$row->id_cliente."' empresa='".$row->empresa."' nomsuc='".$row->nombre_sucursal."' ciudadsuc='".$row->ciudad_suc."' 
                        fraccsuc='".$row->fracc_colonia_suc."' callesuc ='".$row->direccion."' 

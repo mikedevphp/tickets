@@ -119,7 +119,7 @@ class Panelcontrol extends Private_Controller
         {
             redirect('welcome');
         }
-        $data['usuarios'] = $this->panelcontrol_model->getUsers();
+        //$data['usuarios'] = $this->panelcontrol_model->getUsers();
         $this->load->view('head'); // head y menu
         
         if($this->user->id_perfil == 1)
@@ -171,7 +171,7 @@ class Panelcontrol extends Private_Controller
         {
             redirect('welcome');
         }
-        $data['usuarios'] = $this->panelcontrol_model->getUsers();
+        //$data['usuarios'] = $this->panelcontrol_model->getUsers();
         $this->load->view('head'); // head y menu
         
         if($this->user->id_perfil == 1)
@@ -217,6 +217,104 @@ class Panelcontrol extends Private_Controller
         
         
        
+    }
+    
+    // articulos admin
+    
+    public function articulos()
+    {
+        if(!$this->user)
+        {
+            redirect('welcome');
+        }
+        //$data['usuarios'] = $this->panelcontrol_model->getUsers();
+        $this->load->view('head'); // head y menu
+        
+        if($this->user->id_perfil == 1)
+        {
+            //$this->load->view('panelControl_view', $data);// contenido, y/o controles de usuario
+            $this->load->library('Grocery_CRUD');
+            $this->grocery_crud->set_table('articulos_tbl');
+            $this->grocery_crud->set_subject('Articulos');
+            $this->grocery_crud->columns('articulo_id','nombre','descripcion');
+            $this->grocery_crud->display_as('articulo_id','ID');
+            $this->grocery_crud->display_as('nombre','Nombre del Articulo');
+            $this->grocery_crud->display_as('descripcion','Descripcion del Articulo');
+            $this->grocery_crud->required_fields('nombre');
+            $this->grocery_crud->set_language('spanish');
+             $this->grocery_crud->unset_export();
+             $this->grocery_crud->unset_print();
+            $this->grocery_crud->set_theme('datatables');
+            $output = $this->grocery_crud->render();
+            
+            
+            $this->load->view('catalogoView', $output);
+            $this->load->view('footer');// footer
+        }
+	/*else if($this->user->id_perfil == 2)
+        {
+            $data['datosUsuarioEmp'] = $this->panelcontrol_model->getEmployeeById($this->user->idUser);
+            $this->load->view('panelControlnoAdmin_view', $data);
+            
+        }
+        else if($this->user->id_perfil == 3)
+        {
+            $data['datosUsuario'] = $this->panelcontrol_model->getClientById($this->user->idUser);
+            $this->load->view('panelControlnoAdmin_view', $data);
+            
+        }*/
+        else
+        {
+        	redirect('Panelcontrol');
+        }
+    }
+    
+    public function articulosComponentes()
+    {
+        if(!$this->user)
+        {
+            redirect('welcome');
+        }
+        //$data['usuarios'] = $this->panelcontrol_model->getUsers();
+        $this->load->view('head'); // head y menu
+        
+        if($this->user->id_perfil == 1)
+        {
+            //$this->load->view('panelControl_view', $data);// contenido, y/o controles de usuario
+            $this->load->library('Grocery_CRUD');
+            $this->grocery_crud->set_table('componentes_tbl');
+            $this->grocery_crud->set_subject('Componentes');
+            $this->grocery_crud->columns('componente_id','nombre','descripcion');
+            $this->grocery_crud->display_as('articulo_id','ID');
+            $this->grocery_crud->display_as('nombre','Nombre del Componente');
+            $this->grocery_crud->display_as('descripcion','Descripcion del Componente');
+            $this->grocery_crud->required_fields('nombre');
+            $this->grocery_crud->set_language('spanish');
+             $this->grocery_crud->unset_export();
+             $this->grocery_crud->unset_print();
+            $this->grocery_crud->set_theme('datatables');
+            $output = $this->grocery_crud->render();
+            
+            
+            $this->load->view('catalogoView', $output);
+            $this->load->view('footer');// footer
+        }
+	/*else if($this->user->id_perfil == 2)
+        {
+            $data['datosUsuarioEmp'] = $this->panelcontrol_model->getEmployeeById($this->user->idUser);
+            $this->load->view('panelControlnoAdmin_view', $data);
+            
+        }
+        else if($this->user->id_perfil == 3)
+        {
+            $data['datosUsuario'] = $this->panelcontrol_model->getClientById($this->user->idUser);
+            $this->load->view('panelControlnoAdmin_view', $data);
+            
+        }*/
+        else
+        {
+        	redirect('Panelcontrol');
+        }
     }
 }
 

@@ -3,7 +3,7 @@
     <hr>
     
       <footer>
-      <center>Copyright  &copy; Softia 2013</center>
+      <center>Copyright  &copy; Soporte y Soluciones</center>
       </footer>
 
     </div> <!-- /container -->

@@ -103,6 +103,8 @@
                   <li><a tabindex="-1" href="<?php echo base_url("index.php/panelControl"); ?>">Usuarios del Sistema</a></li>
                   <li><a tabindex="-1" href="<?php echo base_url("index.php/panelControl/catalogos"); ?>">Catalogos</a></li>
                   <li><a tabindex="-1" href="<?php echo base_url("index.php/panelControl/subcatalogos"); ?>">Sub - Catalogos</a></li>
+                  <li><a tabindex="-1" href="<?php echo base_url("index.php/panelControl/articulos"); ?>">Articulos</a></li>
+                  <li><a tabindex="-1" href="<?php echo base_url("index.php/panelControl/articulosComponentes"); ?>">Componentes</a></li>
                 </ul>
                </li>
                <?php
