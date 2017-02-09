@@ -16,7 +16,7 @@ class inventario extends Private_Controller
     public function __construct() 
     {
         parent::__construct();
-        
+        $this->load->model('inventario_model','inventario');
     }
     
     public function index()
@@ -40,6 +40,23 @@ class inventario extends Private_Controller
         
         $this->load->view('footer');// footer
         
+    }
+    
+    public function getTypeItems()
+    {
+        echo json_encode(
+                        array(
+                            'itemsTypes' =>$this->inventario->getTypesItems(),
+                            'addonsType' => $this->inventario->getAddonsItems()
+                ));
+        return;
+    }
+    
+    public function saveItemInventory()
+    {
+        $result = $this->inventario->saveItemInventory($this->input->post());
+        
+        echo json_encode(array('msg' => $result));
     }
     
 }
