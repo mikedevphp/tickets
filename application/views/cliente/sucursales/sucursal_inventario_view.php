@@ -13,31 +13,58 @@
     $(document).ready(function()
     {
          
-         ko.components.register('like-widget', {
-    /*viewModel: function(params) {
+         ko.components.register('modal-widget', {
+    viewModel: function() 
+    {
         // Data: value is either null, 'like', or 'dislike'
-        this.chosenValue = params.value;
+        
+        self = this;
+        self.hide = ko.observable(1);
+        self.showModal = function()
+        {
+            self.hide(0);
+            document.getElementsByTagName('body')[0].style.backgroundColor = black;
+            
+        };
+        
+        self.hideModal = function()
+        {
+            self.hide(1);
+        };
+        
+        //console.log(params);
+        /*this.chosenValue = params.value;
          
         // Behaviors
         this.like = function() { this.chosenValue('like'); }.bind(this);
-        this.dislike = function() { this.chosenValue('dislike'); }.bind(this);
-    },*/
+        this.dislike = function() { this.chosenValue('dislike'); }.bind(this);*/
+    },
     template:
-        '<div class="like-or-dislike">\
-            <button >Like it</button>\
-            <button >Dislike it</button>\
-        </div>\
-        <div class="result" >\
-            You <strong ></strong> it\
-        </div>'
+        '<div data-bind="style:{display:hide() ? \'none\' : \'block\'}" \
+         class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">\
+      <div class="modal-header">\
+        <button type="button" class="close" aria-hidden="true">&times;</button>\
+        <h3>Modal header</h3>\
+      </div>\
+      <div class="modal-body">\
+        <p>One fine body…</p>\
+      </div>\
+      <div class="modal-footer">\
+        <a class="btn" data-bind="click: hideModal" >Close</a>\
+        <a class="btn btn-primary">Save changes</a>\
+      </div>\
+    </div>\
+<button class="btn btn-xs btn-success pull-right" data-bind="click: showModal"><i class="icon-plus icon-white" ></i></button>'
+        
 });
          
-         ko.applyBindings(new viewModel(),$("#div_table_items")[0]);
+         ko.applyBindings(new viewModel());
     });
     
     
     function viewModel()
     {
+        var self = this;
         
     }
     
@@ -54,11 +81,11 @@
 <div class="row-fluid">
     <div class="span10 offset1" id="div_table_items">
             <h4></h4><hr> 
-            
+            <modal-widget></modal-widget>
                 <table class="table table-striped table-hover">
                        
-                       <like-widget></like-widget>
-                    <button class="btn btn-xs btn-success pull-right"><i class="icon-plus icon-white" ></i></button>
+                       
+                    
                     <thead>
                     <th>Articulo</th>
                     <th></th>
@@ -74,5 +101,6 @@
                 </table>
             
          <hr>
+         
         </div>
 </div>
