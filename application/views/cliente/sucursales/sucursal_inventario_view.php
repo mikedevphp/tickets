@@ -165,44 +165,118 @@
         self.desc = ko.observable('');
         self.sucursal = ko.observable($("#sucursalID").text());
         self.selectedItemType = ko.observable();
+        self.items = ko.observableArray();
         self.selectedAddonTypeArr = ko.observableArray([]);
         self.componente_check = ko.observable(0);
         self.selectedsAddons = ko.observableArray();
-        
+        self.selectedsAddons()[0] = {id:'0',placa_activo:'',nombre:''};
         self.addAddon = ko.observableArray();
+        
+        
+        self.componente_check.subscribe(function(value)
+        {
+            console.log(value);
+            
+            if(!value)
+            {
+                self.selectedAddonTypeArr.removeAll();
+                
+                for(var i in self.selectedsAddons())
+                {
+                    self.selectedsAddons()[i].placa_activo = '';
+                }
+                
+                
+            }
+            
+            if(value)
+            {
+                self.placa('');
+            }
+        });
+        
+        self.selectedAddonTypeArr.subscribe(function(value) 
+        {
+            //alert("The person's new name is " + newValue);
+            console.log(value);
+            
+            for(var i in self.selectedsAddons())
+            {
+                val = parseInt(Object.keys(self.selectedsAddons())[i]);
+                // existe
+                if(value.indexOf(i) === -1)
+                {
+                    console.log(val);
+                    self.selectedsAddons()[val].placa_activo = '';
+                    continue;
+                    //self.selectedsAddons()[i] = '';
+                }
+                
+                
+                //console.log(value.indexOf(i));
+            }
+           
+            console.log(self.selectedsAddons());
+            //console.log(value);
+        });
         
         self.setTitle = function(option, item) 
         {
-            option.title = item.nombre
-            
-            console.log(option);
+            option.title = item.nombre;
+            self.selectedsAddons()[item.componente_id] = {id:item.componente_id,placa_activo:'',nombre:item.nombre};
+            console.log(self.selectedsAddons());
         };
         
         self.save = function()
+        
         {
-         /* $.post('<?php echo base_url('index.php/inventario/saveItemInventory');?>',
+            console.log(self.selectedsAddons());
+         for(var i in self.selectedsAddons())
+         {
+             
+                // val = parseInt(Object.keys(self.selectedsAddons())[i]);
+                // existe
+                if(self.selectedAddonTypeArr.indexOf(i) === -1)
+                {
+                    //console.log(val);
+                    delete(self.selectedsAddons()[i]);
+                    continue;
+                    //self.selectedsAddons()[i] = '';
+                }
+             
+             
+             //;
+         }
+         
+         
+         $.post('<?php echo base_url('index.php/inventario/saveItemInventory');?>',
           {
               sucursal_id:self.sucursal(),
               placa_activo:self.placa(),
               descripcion_alt:self.desc(),
               articulo_id:self.selectedItemType(),
-              componente_id:JSON.stringify(self.selectedAddonType())
+              componente_id:JSON.stringify(self.selectedsAddons())
           },
           function(response)
           {
-              res = JSON.parse(response)
-              
-              if(res.msg=='true')
+              res = JSON.parse(response);
+              console.log(res);
+              if(res.msg)
               {
-                  alert();
+                  alert('Se ha creado su articulo.');
+                  window.location.reload();
+                  //self.init();
                   return;
               }
               
-              alert();
-          });*/
+              alert('Error');
+              window.location.reload();
+              return;
+              
+          });
            
-           //console.log(self.selectedItemType());
-           console.log(self.selectedAddonTypeArr());
+           //console.log(self.selectedItemType());*/
+           console.log(self.selectedsAddons());
         };
         
         
@@ -216,15 +290,20 @@
         self.hideModal = function()
         {
             self.hide(1);
+            
+            self.componente_check(0);
+            
         };
         
         self.init = function()
         {
-            $.get('<?php echo base_url('index.php/inventario/getTypeItems');?>',
+            
+            $.get('<?php echo base_url('index.php/inventario/getTypeItems');?>'+'/'+self.sucursal(),
             function(response)
             {
                 itemsTypes = JSON.parse(response).itemsTypes;
                 addonsType = JSON.parse(response).addonsType;
+                items = JSON.parse(response).items;
                 for(var i in itemsTypes)
                 {
                     self.itemType.push(itemsTypes[i]);
@@ -235,10 +314,17 @@
                     self.addonsType.push(addonsType[i]);
                 }
                 
+                for(var i in items)
+                {
+                    self.items.push(items[i]);
+                }
+                console.log(items);
                 
+                //self.componente_check(0);
             });
-        }();
+        };
         
+        self.init();
     }
     
 </script>
@@ -248,6 +334,7 @@
     <ul class="breadcrumb">
     <li><a href="<?php echo base_url("index.php/clientes"); ?>">Clientes</a> <span class="divider">/</span></li> 
     <li class="active"><a hre="">Sucursal</a><span class="divider">/</li>
+    <li class="active"><a hre="">Inventario</a><span class="divider">/</li>
     <li id="sucursalID" class="active"><?php echo $sucursal;?></li>
     </ul>
     </div>
@@ -298,7 +385,7 @@
                       <label class="control-label" >Componentes Placa</label>
                       <div class="controls" data-bind="foreach: selectedAddonTypeArr">
                           <input type="text" 
-                                 class="input-xlarge" data-bind="value: $index" />
+                                 class="input-xlarge" data-bind="value: $root.selectedsAddons()[$data].placa_activo, attr:{placeholder:'Placa de ' + $root.selectedsAddons()[$data].nombre}" />
                           
                       </div>
                     </div>
@@ -320,14 +407,18 @@
                 <table class="table table-striped table-hover">
                     <thead>
                     <th>Articulo</th>
+                    <th>Descripcion</th>
+                    <th></th>
                     <th></th>
                     <th></th>
                     </thead>
-                     <tbody>
+                    <tbody data-bind="foreach: items">
                          <tr>
-                             <td>edth</td>
+                             <td data-bind="text: nombre"></td>
+                             <td data-bind="text: descripcion_alt"></td>
+                             <td><button  class="btn btn-xs btn-success"><i class="icon-eye-close icon-white"></i></button></td>
                              <td><button  class="btn btn-xs btn-danger"><i class="icon-trash icon-white"></i></button></td>
-                             <td><button data-bind="click: showModal" class="btn btn-xs btn-info"><i class="icon-pencil icon-white" ></i></button></td>
+                             <td><button  class="btn btn-xs btn-info"><i class="icon-pencil icon-white" ></i></button></td>
                          </tr> 
                      </tbody>
                 </table>

@@ -44,8 +44,14 @@ class inventario extends Private_Controller
     
     public function getTypeItems()
     {
+        
         echo json_encode(
                         array(
+                            'items' => $this->db->select('a.*, i.descripcion_alt')
+                            ->from('inventario_sucursal i')
+                ->join('articulos_tbl a','i.articulo_id = a.articulo_id')
+                ->where('i.sucusal_id',$this->uri->segment(3))->group_by('a.articulo_id')
+                        ->get()->result(),
                             'itemsTypes' =>$this->inventario->getTypesItems(),
                             'addonsType' => $this->inventario->getAddonsItems()
                 ));
@@ -55,7 +61,7 @@ class inventario extends Private_Controller
     public function saveItemInventory()
     {
         $result = $this->inventario->saveItemInventory($this->input->post());
-        
+        //$result = true;
         echo json_encode(array('msg' => $result));
     }
     
