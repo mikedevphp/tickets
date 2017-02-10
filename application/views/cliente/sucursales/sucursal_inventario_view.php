@@ -32,7 +32,7 @@
     padding: 0;
     border: 1px solid #888;
     width: 50%;
-    height: 40%;
+    height: 50%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
     -webkit-animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
@@ -146,9 +146,18 @@
         
     }
     
+    function addonModel(id, nombre)
+    {
+        var self = this;
+        
+        self.id = id;
+        self.nombre = nombre;
+    }
+    
     function viewModel()
     {
-        self = this;
+        var self = this;
+        
         self.hide = ko.observable(1);
         self.itemType = ko.observableArray([]);
         self.addonsType = ko.observableArray([]);
@@ -156,9 +165,18 @@
         self.desc = ko.observable('');
         self.sucursal = ko.observable($("#sucursalID").text());
         self.selectedItemType = ko.observable();
-        self.selectedAddonType = ko.observableArray([]);
+        self.selectedAddonTypeArr = ko.observableArray([]);
         self.componente_check = ko.observable(0);
-        //self.selectedsAddons = ko.observableArray();
+        self.selectedsAddons = ko.observableArray();
+        
+        self.addAddon = ko.observableArray();
+        
+        self.setTitle = function(option, item) 
+        {
+            option.title = item.nombre
+            
+            console.log(option);
+        };
         
         self.save = function()
         {
@@ -184,7 +202,7 @@
           });*/
            
            //console.log(self.selectedItemType());
-           console.log(self.selectedAddonType());
+           console.log(self.selectedAddonTypeArr());
         };
         
         
@@ -270,16 +288,18 @@
                       <label class="control-label" >Componentes</label>
                       <div class="controls">
                           <select class="input-xlarge" data-bind="options: addonsType, 
-                                  optionsText:'nombre',optionsValue:'componente_id', selectedOptions: function(){selectedAddonType().push($data);}" multiple="true">
+                                  optionsText:'nombre',optionsValue:'componente_id', selectedOptions: selectedAddonTypeArr,
+                            optionsAfterRender: $root.setTitle" multiple="true">
                               
                           </select>
                       </div>
                     </div>
-                      <div data-bind="visible: componente_check() && selectedAddonType().length > 0" class="control-group" style="margin-right:900px;">
+                      <div data-bind="visible: componente_check() && selectedAddonTypeArr().length > 0" class="control-group" style="margin-right:900px;">
                       <label class="control-label" >Componentes Placa</label>
-                      <div class="controls" data-bind="foreach: selectedAddonType">
+                      <div class="controls" data-bind="foreach: selectedAddonTypeArr">
                           <input type="text" 
-                                 class="input-xlarge" data-bind=""/>
+                                 class="input-xlarge" data-bind="value: $index" />
+                          
                       </div>
                     </div>
                     <div class="control-group" style="margin-right:900px;">
