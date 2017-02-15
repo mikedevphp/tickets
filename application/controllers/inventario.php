@@ -47,10 +47,10 @@ class inventario extends Private_Controller
         
         echo json_encode(
                         array(
-                            'items' => $this->db->select('a.*, i.descripcion_alt')
+                            'items' => $this->db->select('a.*, i.*')
                             ->from('inventario_sucursal i')
                 ->join('articulos_tbl a','i.articulo_id = a.articulo_id')
-                ->where('i.sucusal_id',$this->uri->segment(3))->group_by('a.articulo_id')
+                ->where('i.sucusal_id',$this->uri->segment(3))
                         ->get()->result(),
                             'itemsTypes' =>$this->inventario->getTypesItems(),
                             'addonsType' => $this->inventario->getAddonsItems()

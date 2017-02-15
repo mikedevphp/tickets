@@ -141,8 +141,18 @@
     
     
     
-    function itemModel()
+    function item(item)
     {
+        var self = this;
+        // asignar el objeto del contructor, a la referencia K.o.
+        
+            self.item = item;
+       //console.log(self.item.componente_id);
+        //self.id = item.id;
+        self.nombre = ko.observable(self.item.nombre);
+        self.descripcion_alt = ko.observable(self.item.descripcion_alt);
+        
+        
         
     }
     
@@ -175,7 +185,7 @@
         
         self.componente_check.subscribe(function(value)
         {
-            console.log(value);
+            //console.log(value);
             
             if(!value)
             {
@@ -198,7 +208,7 @@
         self.selectedAddonTypeArr.subscribe(function(value) 
         {
             //alert("The person's new name is " + newValue);
-            console.log(value);
+            //console.log(value);
             
             for(var i in self.selectedsAddons())
             {
@@ -216,7 +226,7 @@
                 //console.log(value.indexOf(i));
             }
            
-            console.log(self.selectedsAddons());
+            //console.log(self.selectedsAddons());
             //console.log(value);
         });
         
@@ -224,7 +234,7 @@
         {
             option.title = item.nombre;
             self.selectedsAddons()[item.componente_id] = {id:item.componente_id,placa_activo:'',nombre:item.nombre};
-            console.log(self.selectedsAddons());
+            //console.log(self.selectedsAddons());
         };
         
         self.save = function()
@@ -260,7 +270,7 @@
           function(response)
           {
               res = JSON.parse(response);
-              console.log(res);
+              //console.log(res);
               if(res.msg)
               {
                   alert('Se ha creado su articulo.');
@@ -276,7 +286,7 @@
           });
            
            //console.log(self.selectedItemType());*/
-           console.log(self.selectedsAddons());
+           //console.log(self.selectedsAddons());
         };
         
         
@@ -316,9 +326,18 @@
                 
                 for(var i in items)
                 {
-                    self.items.push(items[i]);
+                    /*if(items[i].componente_id === null)
+                    {
+                        self.items.push(new item(items[i]));
+                    }
+                    else
+                    {
+                        console.log(items[i]);
+                    }*/
+                    self.items.push(new item(items[i]));
+                    //console.log(items[i]);
                 }
-                console.log(items);
+                //console.log(items);
                 
                 //self.componente_check(0);
             });
@@ -414,12 +433,29 @@
                     </thead>
                     <tbody data-bind="foreach: items">
                          <tr>
-                             <td data-bind="text: nombre"></td>
-                             <td data-bind="text: descripcion_alt"></td>
+                             <td data-bind="text: item.nombre"></td>
+                             <td data-bind="text: item.descripcion_alt"></td>
                              <td><button  class="btn btn-xs btn-success"><i class="icon-eye-close icon-white"></i></button></td>
                              <td><button  class="btn btn-xs btn-danger"><i class="icon-trash icon-white"></i></button></td>
                              <td><button  class="btn btn-xs btn-info"><i class="icon-pencil icon-white" ></i></button></td>
-                         </tr> 
+                         </tr>
+                         <tr>
+                             <td><small>Componentes</small></td>
+                             <td>
+                                 <ol >
+                                <li>tefv</li>
+                                <li>tefv</li>
+                                </ol>
+                             </td>
+                             <td>
+                                 <ul>
+                                <li>action</li>
+                                <li>action</li>
+                                </ul>
+                             </td>
+                             <td></td>
+                             <td></td>
+                         </tr>
                      </tbody>
                 </table>
             
