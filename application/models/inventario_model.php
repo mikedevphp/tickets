@@ -32,6 +32,36 @@ class Inventario_model extends CI_Model
                 ->get()->result();
     }
     
+    public function getAddonsItemsByItemId($inv_id)
+    {
+        return $this->db->select('*')
+                ->from('inventario_sucursal_componente isc')
+                ->join('componentes_tbl c','isc.componente_id = c.componente_id','left')
+                ->where('isc.inv_id',$inv_id)
+                
+                ->get()->result();
+    }
+    
+    public function getAddonByIDActivo($placa)
+    {
+        return $this->db->select('*')
+                ->from('inventario_sucursal_componente isc')
+                ->join('inventario_sucursal','isc.articulo_id = inventario_sucursal.articulo_id')
+                ->like('placa_activo',$placa)->get()->result();
+    }
+    
+    public function saveItem($item)
+    {
+        return $this->db->where('inv_id',$item['inv_id'])
+                ->update('inventario_sucursal',array('descripcion_alt' => $item['descripcion_alt']));
+    }
+    
+    public function saveAddon($addon)
+    {
+        return $this->db->where('inv_com_id',$addon['inv_com_id'])
+                ->update('inventario_sucursal_componente',array('placa_activo' => $addon['placa_activo']));
+    }
+    
     public function saveItemInventory($post)
     {
         $this->db->trans_begin();
@@ -49,19 +79,20 @@ class Inventario_model extends CI_Model
                                                         'descripcion_alt' =>$post['descripcion_alt']
                                                     )
                     );
-           
+           $inv_id = $this->db->insert_id();
            $this->db->insert('inventario_sucursal_componente',
                                                             array(
+                                                                'inv_id' => $inv_id,
                                                                 'placa_activo' =>$post['placa_activo'],
                                                         'articulo_id' =>$post['articulo_id'],
                                                         'componente_id' =>0,
                                                             ));
-           
+           //$inv_com_id = $this->db->insert_id();
             $this->db->insert('inventario_mov',
                                                     array(
-                                                        'articulo_id' => $post['articulo_id'],
+                                                        'inv_id' => $inv_id,
                                                         'sucursal_id' =>$post['sucursal_id'],
-                                                        'componente_id' =>0,
+                                                        'inv_com_id' =>0,
                                                         'status_mov' =>'alta',
                                                         'fecha_mov' =>date("Y-m-d H:i:s")
                                                     )
@@ -72,33 +103,8 @@ class Inventario_model extends CI_Model
         else
         {
             //$arr = array();
-            $arr_com = array();
-            $arr_mov = array();
-            foreach($componentes as $c)
-            {
-                if(!is_null($c))
-                {
-                    /*$arr[] = array('articulo_id' => $post['articulo_id'],
-                                                            'sucusal_id' =>$post['sucursal_id'],
-                                                            'componente_id' =>$c['id'],
-                                                            'placa_activo' =>empty($c['placa_activo']) ? NULL : $c['placa_activo'],
-                                                            'descripcion_alt' =>$post['descripcion_alt']);*/
-                    
-                    $arr_com[] = array('articulo_id' => $post['articulo_id'],
-                                                            /*'sucusal_id' =>$post['sucursal_id'],*/
-                                                            'componente_id' =>$c['id'],
-                                                            'placa_activo' =>empty($c['placa_activo']) ? 0 : $c['placa_activo'],
-                                                            /*'descripcion_alt' =>$post['descripcion_alt']*/);
-                    
-                    $arr_mov[] = array('articulo_id' => $post['articulo_id'],
-                                                        'sucursal_id' =>$post['sucursal_id'],
-                                                        'componente_id' =>empty($c['id']) ? 0 : $c['id'],
-                                                        'status_mov' =>'alta',
-                                                        'fecha_mov' =>date("Y-m-d H:i:s"));
-                }
-            }
-            
-            
+            //$arr_com = array();
+            //$arr_mov = array();
             $this->db->insert('inventario_sucursal',
                                                     array(
                                                         'articulo_id' => $post['articulo_id'],
@@ -109,9 +115,49 @@ class Inventario_model extends CI_Model
                                                         'descripcion_alt' =>$post['descripcion_alt']
                                                     )
                     );
+            $inv_id = $this->db->insert_id();
+            foreach($componentes as $c)
+            {
+                if(!is_null($c))
+                {
+                    /*$arr[] = array('articulo_id' => $post['articulo_id'],
+                                                            'sucusal_id' =>$post['sucursal_id'],
+                                                            'componente_id' =>$c['id'],
+                                                            'placa_activo' =>empty($c['placa_activo']) ? NULL : $c['placa_activo'],
+                                                            'descripcion_alt' =>$post['descripcion_alt']);*/
+                    
+                    /*$arr_com[] = array('articulo_id' => $post['articulo_id'],
+                                                            'sucusal_id' =>$post['sucursal_id'],
+                                                            'componente_id' =>$c['id'],
+                                                            'placa_activo' =>empty($c['placa_activo']) ? 0 : $c['placa_activo'],
+                                                            'descripcion_alt' =>$post['descripcion_alt']);*/
+                    
+                    $this->db->insert('inventario_sucursal_componente',array(
+                                                            'articulo_id' => $post['articulo_id'],
+                                                            'inv_id' => $inv_id,
+                                                            'componente_id' =>$c['id'],
+                                                            'placa_activo' =>empty($c['placa_activo']) ? 0 : $c['placa_activo'],
+                                                            ));
+                    $inv_com_id = $this->db->insert_id();
+                    $this->db->insert('inventario_mov',array('inv_id' => $inv_id,
+                                                        'sucursal_id' =>$post['sucursal_id'],
+                                                        'inv_com_id' => $inv_com_id,
+                                                        'status_mov' =>'alta',
+                                                        'fecha_mov' =>date("Y-m-d H:i:s")));
+                    
+                    /*$arr_mov[] =                        array('articulo_id' => $post['articulo_id'],
+                                                        'sucursal_id' =>$post['sucursal_id'],
+                                                        'componente_id' =>empty($c['id']) ? 0 : $c['id'],
+                                                        'status_mov' =>'alta',
+                                                        'fecha_mov' =>date("Y-m-d H:i:s"));*/
+                }
+            }
             
-            $this->db->insert_batch('inventario_sucursal_componente',$arr_com);
-            $this->db->insert_batch('inventario_mov',$arr_mov);
+            
+            
+            
+            //$this->db->insert_batch('inventario_sucursal_componente',$arr_com);
+            //$this->db->insert_batch('inventario_mov',$arr_mov);
        }
         
         

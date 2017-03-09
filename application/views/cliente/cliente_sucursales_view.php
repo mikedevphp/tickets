@@ -7,7 +7,70 @@
 </div>
 <script src="<?= base_url('css/js/modalsucursales.js') ?>"></script>
  
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+       //alert(); 
+       var ajax;
+       $('#search_placa_activo').val('');
+                       $('#sucursales_placa_activo').empty();
+
+       $('#search_placa_activo').change(function()
+       {
+           
+          
+          var opt = $('option[value="'+$(this).val()+'"]');
+          
+          console.log(opt.attr('id'));
+          
+          window.location.href = '<?php echo base_url('index.php/inventario/sucursal')?>/'+opt.attr('id');
+          
+       });
+       
+       $('#search_placa_activo').focus(function()
+       {
+          $(this).val(''); 
+       });
+       
+       $('#search_placa_activo').keypress(function(event)
+       {
+           
+           //alert();
+           console.log(event.which);
+           if(event.which !== 0)
+           {
+            if(typeof ajax !== 'undefined')
+            {
+               // ajax.abort();
+            }
+
+
+            ajax = $.get('<?php echo base_url('index.php/inventario/searchAddonByIDActivo');?>' + '/' +6,
+            function(response)
+            {
+                //console.log(response.msg);
+                $('#sucursales_placa_activo').empty();
+                for(var i in response.msg)
+                {
+                    $('#sucursales_placa_activo')
+                            .append('<option id="'+response.msg[i].sucusal_id+'" value="'+response.msg[i].placa_activo+' en '+response.msg[i].sucusal_id+'" />');
+                }
+
+            },'json');
+        }
+       });
+       
+    });
+    
+</script>
+
 <div class="row-fluid">
+    <label for="search_placa_activo">Buscar placa activo</label>
+    <input type="text" class="" value="" id="search_placa_activo" list="sucursales_placa_activo" name="search_placa_activo" />
+    
+    <datalist id="sucursales_placa_activo">
+        
+    </datalist>
     <?php
     
         if(isset($sucursales))

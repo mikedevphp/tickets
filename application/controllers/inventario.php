@@ -58,11 +58,44 @@ class inventario extends Private_Controller
         return;
     }
     
+    public function getAddonByItemId()
+    {
+        $result = $this->inventario->getAddonsItemsByItemId($this->uri->segment(3));
+
+        echo json_encode(array('msg' => $result));
+    }
+
+    public function saveItem()
+    {
+        if($this->inventario->saveItem($this->input->post()))
+        {
+            return json_encode(array('msg' => TRUE));
+        }
+        
+        return json_encode(array('msg' => FALSE));
+    }
+    
+    public function saveAddon()
+    {
+        if($this->inventario->saveAddon($this->input->post()))
+        {
+            return json_encode(array('msg' => TRUE));
+        }
+        
+        return json_encode(array('msg' => FALSE));
+    }
+    
     public function saveItemInventory()
     {
         $result = $this->inventario->saveItemInventory($this->input->post());
         //$result = true;
         echo json_encode(array('msg' => $result));
     }
-    
+
+      public function searchAddonByIDActivo()
+      {
+          $result = $this->inventario->getAddonByIDActivo($this->uri->segment(3));
+            //$result = true;
+            echo json_encode(array('msg' => $result));
+      }
 }

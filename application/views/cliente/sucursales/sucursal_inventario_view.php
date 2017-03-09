@@ -86,267 +86,8 @@
 }
 </style>
 <script type="text/javascript" src="<?php echo base_url('css/js/knockout-3.3.0.js')?>"></script>
-<script type="text/javascript" >
-    $(document).ready(function()
-    {
-         
-        /* ko.components.register('modal-widget', {
-    viewModel: function() 
-    {
-        // Data: value is either null, 'like', or 'dislike'
-        
-        self = this;
-        self.hide = ko.observable(1);
-        self.showModal = function()
-        {
-            self.hide(0);
-           
-            
-        };
-        
-        self.hideModal = function()
-        {
-            self.hide(1);
-        };
-        
-        //console.log(params);
-        /*this.chosenValue = params.value;
-         
-        // Behaviors
-        this.like = function() { this.chosenValue('like'); }.bind(this);
-        this.dislike = function() { this.chosenValue('dislike'); }.bind(this);
-    },
-    template:
-           '<button class="btn btn-xs btn-success pull-right" data-bind="click: showModal"><i class="icon-plus icon-white" ></i></button>\
-         <div id="myModal" data-bind="style:{display:hide() ? \'none\' : \'block\'}" class="modal">\
-  <div class="modal-content">\
-    <div class="modal-header">\
-      <span class="close" data-bind="click:hideModal">&times;</span>\
-      <h2>Modal Header</h2>\
-    </div>\
-    <div class="modal-body">\
-      <p>Some text in the Modal Body</p>\
-      <p>Some other text...</p>\
-    </div>\
-    <div class="modal-footer">\
-      <h3>Modal Footer</h3>\
-    </div>\
-  </div>\
-</div>'
+<script type="text/javascript" src="<?php echo base_url('css/js/sucursal_inventario.js')?>"></script>
 
-});*/
-         
-         ko.applyBindings(new viewModel());
-    });
-    
-    
-    
-    function item(item)
-    {
-        var self = this;
-        // asignar el objeto del contructor, a la referencia K.o.
-        
-            self.item = item;
-       //console.log(self.item.componente_id);
-        //self.id = item.id;
-        self.nombre = ko.observable(self.item.nombre);
-        self.descripcion_alt = ko.observable(self.item.descripcion_alt);
-        
-        
-        
-    }
-    
-    function addonModel(id, nombre)
-    {
-        var self = this;
-        
-        self.id = id;
-        self.nombre = nombre;
-    }
-    
-    function viewModel()
-    {
-        var self = this;
-        
-        self.hide = ko.observable(1);
-        self.itemType = ko.observableArray([]);
-        self.addonsType = ko.observableArray([]);
-        self.placa = ko.observable('');
-        self.desc = ko.observable('');
-        self.sucursal = ko.observable($("#sucursalID").text());
-        self.selectedItemType = ko.observable();
-        self.items = ko.observableArray();
-        self.selectedAddonTypeArr = ko.observableArray([]);
-        self.componente_check = ko.observable(0);
-        self.selectedsAddons = ko.observableArray();
-        self.selectedsAddons()[0] = {id:'0',placa_activo:'',nombre:''};
-        self.addAddon = ko.observableArray();
-        
-        
-        self.componente_check.subscribe(function(value)
-        {
-            //console.log(value);
-            
-            if(!value)
-            {
-                self.selectedAddonTypeArr.removeAll();
-                
-                for(var i in self.selectedsAddons())
-                {
-                    self.selectedsAddons()[i].placa_activo = '';
-                }
-                
-                
-            }
-            
-            if(value)
-            {
-                self.placa('');
-            }
-        });
-        
-        self.selectedAddonTypeArr.subscribe(function(value) 
-        {
-            //alert("The person's new name is " + newValue);
-            //console.log(value);
-            
-            for(var i in self.selectedsAddons())
-            {
-                val = parseInt(Object.keys(self.selectedsAddons())[i]);
-                // existe
-                if(value.indexOf(i) === -1)
-                {
-                    console.log(val);
-                    self.selectedsAddons()[val].placa_activo = '';
-                    continue;
-                    //self.selectedsAddons()[i] = '';
-                }
-                
-                
-                //console.log(value.indexOf(i));
-            }
-           
-            //console.log(self.selectedsAddons());
-            //console.log(value);
-        });
-        
-        self.setTitle = function(option, item) 
-        {
-            option.title = item.nombre;
-            self.selectedsAddons()[item.componente_id] = {id:item.componente_id,placa_activo:'',nombre:item.nombre};
-            //console.log(self.selectedsAddons());
-        };
-        
-        self.save = function()
-        
-        {
-            console.log(self.selectedsAddons());
-         for(var i in self.selectedsAddons())
-         {
-             
-                // val = parseInt(Object.keys(self.selectedsAddons())[i]);
-                // existe
-                if(self.selectedAddonTypeArr.indexOf(i) === -1)
-                {
-                    //console.log(val);
-                    delete(self.selectedsAddons()[i]);
-                    continue;
-                    //self.selectedsAddons()[i] = '';
-                }
-             
-             
-             //;
-         }
-         
-         
-         $.post('<?php echo base_url('index.php/inventario/saveItemInventory');?>',
-          {
-              sucursal_id:self.sucursal(),
-              placa_activo:self.placa(),
-              descripcion_alt:self.desc(),
-              articulo_id:self.selectedItemType(),
-              componente_id:JSON.stringify(self.selectedsAddons())
-          },
-          function(response)
-          {
-              res = JSON.parse(response);
-              //console.log(res);
-              if(res.msg)
-              {
-                  alert('Se ha creado su articulo.');
-                  window.location.reload();
-                  //self.init();
-                  return;
-              }
-              
-              alert('Error');
-              window.location.reload();
-              return;
-              
-          });
-           
-           //console.log(self.selectedItemType());*/
-           //console.log(self.selectedsAddons());
-        };
-        
-        
-        self.showModal = function()
-        {
-            self.hide(0);
-           
-            
-        };
-        
-        self.hideModal = function()
-        {
-            self.hide(1);
-            
-            self.componente_check(0);
-            
-        };
-        
-        self.init = function()
-        {
-            
-            $.get('<?php echo base_url('index.php/inventario/getTypeItems');?>'+'/'+self.sucursal(),
-            function(response)
-            {
-                itemsTypes = JSON.parse(response).itemsTypes;
-                addonsType = JSON.parse(response).addonsType;
-                items = JSON.parse(response).items;
-                for(var i in itemsTypes)
-                {
-                    self.itemType.push(itemsTypes[i]);
-                }
-                
-                for(var i in addonsType)
-                {
-                    self.addonsType.push(addonsType[i]);
-                }
-                
-                for(var i in items)
-                {
-                    /*if(items[i].componente_id === null)
-                    {
-                        self.items.push(new item(items[i]));
-                    }
-                    else
-                    {
-                        console.log(items[i]);
-                    }*/
-                    self.items.push(new item(items[i]));
-                    //console.log(items[i]);
-                }
-                //console.log(items);
-                
-                //self.componente_check(0);
-            });
-        };
-        
-        self.init();
-    }
-    
-</script>
 
 <div class="row-fluid">
     <div class="span6">
@@ -423,6 +164,18 @@
             </div>
             </div>
             </center>
+            <!-- Edit Item Descripcion -->
+            <script type="text/html" id="description-template">
+                <span data-bind="text: descripcion_alt, visible: !showEdit()"></span>
+                <input type="text" data-bind="value: descripcion_alt_value, visible: showEdit()" />
+            </script>
+            
+            <!-- Edit Componente -->
+            <script type="text/html" id="edit-componente-template">
+            <label>Componente : <span data-bind="text: (nombre() == null) ? 'S/N' : nombre"></span></label>
+             <label> N° de Placa :<span data-bind="text: placa_activo, visible: !showEdit()"></span> </label>
+             <input type="text" data-bind="value: placa_activo_value, visible: showEdit()" />
+             </script>                            
                 <table class="table table-striped table-hover">
                     <thead>
                     <th>Articulo</th>
@@ -433,25 +186,31 @@
                     </thead>
                     <tbody data-bind="foreach: items">
                          <tr>
-                             <td data-bind="text: item.nombre"></td>
-                             <td data-bind="text: item.descripcion_alt"></td>
-                             <td><button  class="btn btn-xs btn-success"><i class="icon-eye-close icon-white"></i></button></td>
-                             <td><button  class="btn btn-xs btn-danger"><i class="icon-trash icon-white"></i></button></td>
-                             <td><button  class="btn btn-xs btn-info"><i class="icon-pencil icon-white" ></i></button></td>
+                             <td data-bind="text: nombre"></td>
+                             <td data-bind="template: {name:'description-template',data: $data}"></td>
+                             <td><button  class="btn btn-xs btn-info" title="Editar articulo" data-bind="click: edit"><i class="icon-pencil icon-white" ></i></button></td>
+                             <td><button data-bind="click: showDetail" title="Mostrar componentes" class="btn btn-xs btn-success"><i class="icon-eye-close icon-white"></i></button></td>
+                             <td><button data-bind="click: $parent.removeItem"  class="btn btn-xs btn-danger"><i class="icon-trash icon-white"></i></button></td>
+                             
                          </tr>
-                         <tr>
-                             <td><small>Componentes</small></td>
+                         <tr data-bind="visible: eye">
                              <td>
-                                 <ol >
-                                <li>tefv</li>
-                                <li>tefv</li>
+                                 <small>Componentes</small>
+                                 <button data-bind="click: addAddon" class="btn btn-mini btn-success">+</button>
+                             </td>
+                             <td colspan="3">
+                                 <ol style="list-style-type:none;" data-bind="foreach: componente">
+                                     <li>
+                                         <div data-bind="template: {name:'edit-componente-template',data: $data}"></div>
+                                         <button data-bind="click:edit" class="btn btn-mini btn-info"><i class="icon-pencil icon-white" ></i></button>
+                                         <button data-bind="click:$parent.removeAddon" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i></button>
+                                        
+                                     </li>
+                                
                                 </ol>
                              </td>
                              <td>
-                                 <ul>
-                                <li>action</li>
-                                <li>action</li>
-                                </ul>
+                                 
                              </td>
                              <td></td>
                              <td></td>
