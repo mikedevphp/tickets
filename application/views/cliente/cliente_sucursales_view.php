@@ -45,7 +45,7 @@
             }
 
 
-            ajax = $.get('<?php echo base_url('index.php/inventario/searchAddonByIDActivo');?>' + '/' +6,
+            ajax = $.get('<?php echo base_url('index.php/inventario/searchAddonByIDActivo');?>' + '/' +$(this).val(),
             function(response)
             {
                 //console.log(response.msg);
