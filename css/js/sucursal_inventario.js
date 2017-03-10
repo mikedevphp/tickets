@@ -13,7 +13,7 @@ var base_url = location.origin +'/proyectos/tickets/';
 
 $(document).ready(function()
 {
-   console.log(base_url); 
+   //console.log(base_url); 
    
          
         /* ko.components.register('modal-widget', {
@@ -72,6 +72,8 @@ $(document).ready(function()
         var self = this;
         self.addon = addon;
         self.nombre = ko.observable(self.addon.nombre);
+        self.inv_id = ko.observable(self.addon.inv_id);
+        self.sucursal_id = ko.observable(self.addon.sucusal_id);
         self.inv_com_id = ko.observable(self.addon.inv_com_id);
         self.placa_activo = ko.observable(self.addon.placa_activo);
         self.placa_activo_value = ko.observable('');
@@ -129,7 +131,8 @@ $(document).ready(function()
         self.componente = ko.observableArray();
         self.eye = ko.observable(false);
         self.showEdit = ko.observable(false);
-        
+        self.hrefInv = 
+                ko.observable(base_url+'index.php/inventario/sucursal/'+self.sucursal_id()+'/inventarioDetalle/'+self.inv_id());
         self.edit = function()
         {
            
@@ -173,9 +176,32 @@ $(document).ready(function()
             self.descripcion_alt_value('');
         };
         
-        self.removeAddon = function(row)
+        self.removeAddon = function(addon)
         {
-            self.componente.remove(row);
+            console.log(addon.inv_com_id());
+            
+            if(confirm('¿Quiere eliminar este registro?'))
+            {
+                $.post(base_url+'index.php/inventario/deleteAddon/',
+                {
+                    inv_id : addon.inv_id(),
+                    sucursal_id:addon.sucursal_id(),
+                    inv_com_id: addon.inv_com_id()
+                    
+                },
+                function(response)
+                {
+                    //console.log(response);
+                    if(response.msg)
+                    {
+                        self.componente.remove(addon);
+                    }
+                    
+                },'json');
+                
+                
+            }
+            
         };
         
         self.addAddon = function()

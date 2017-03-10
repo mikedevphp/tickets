@@ -174,7 +174,7 @@
             <script type="text/html" id="edit-componente-template">
             <label>Componente : <span data-bind="text: (nombre() == null) ? 'S/N' : nombre"></span></label>
              <label> N° de Placa :<span data-bind="text: placa_activo, visible: !showEdit()"></span> </label>
-             <input type="text" data-bind="value: placa_activo_value, visible: showEdit()" />
+             <input type="text" data-bind="value: placa_activo_value, visible: showEdit()" class="input-medium"/>
              </script>                            
                 <table class="table table-striped table-hover">
                     <thead>
@@ -188,17 +188,17 @@
                          <tr>
                              <td data-bind="text: nombre"></td>
                              <td data-bind="template: {name:'description-template',data: $data}"></td>
-                             <td><button  class="btn btn-xs btn-info" title="Editar articulo" data-bind="click: edit"><i class="icon-pencil icon-white" ></i></button></td>
                              <td><button data-bind="click: showDetail" title="Mostrar componentes" class="btn btn-xs btn-success"><i class="icon-eye-close icon-white"></i></button></td>
+                             <td><button  class="btn btn-xs btn-info" title="Editar articulo" data-bind="click: edit"><i class="icon-pencil icon-white" ></i></button></td>
                              <td><button data-bind="click: $parent.removeItem"  class="btn btn-xs btn-danger"><i class="icon-trash icon-white"></i></button></td>
-                             
+                             <td><a title="Detalles del inventario" data-bind="attr:{'href':hrefInv()}" class="btn btn-xs"><i class="icon-th-list"></i></a></td>
                          </tr>
                          <tr data-bind="visible: eye">
                              <td>
                                  <small>Componentes</small>
                                  <button data-bind="click: addAddon" class="btn btn-mini btn-success">+</button>
                              </td>
-                             <td colspan="3">
+                             <td>
                                  <ol style="list-style-type:none;" data-bind="foreach: componente">
                                      <li>
                                          <div data-bind="template: {name:'edit-componente-template',data: $data}"></div>
@@ -212,6 +212,7 @@
                              <td>
                                  
                              </td>
+                             <td></td>
                              <td></td>
                              <td></td>
                          </tr>

@@ -33,13 +33,36 @@ class inventario extends Private_Controller
         {
             redirect('welcome');
         }
+        
+        if($this->uri->segment(4) == 'inventarioDetalle')
+        {
+           $this->_detail($this->uri->segment(3),$this->uri->segment(5)); 
+           //return;
+        }
+        elseif($this->uri->segment(4) == '')
+        {
         $data['sucursal'] = $this->uri->segment(3);
         $this->load->view('head');
         $this->load->view('cliente/sucursales/sucursal_inventario_view',$data);
         //echo $this->uri->segment(3);
         
         $this->load->view('footer');// footer
+        }
+        else
+        {
+            redirect('clientes');
+        }
         
+    }
+    
+    private function _detail($sucursal,$inv_id)
+    {
+        $this->load->view('head');
+        //echo $sucursal;
+        $data['rows'] = $this->inventario->getInventoryByItemId($sucursal,$inv_id);
+        $this->load->view('cliente/sucursales/sucursal_inventario_detail_view',$data);
+        //print_r($data);
+        $this->load->view('footer');// footer
     }
     
     public function getTypeItems()
@@ -79,10 +102,11 @@ class inventario extends Private_Controller
     {
         if($this->inventario->saveAddon($this->input->post()))
         {
-            return json_encode(array('msg' => TRUE));
+            echo json_encode(array('msg' => TRUE));
+            return;
         }
         
-        return json_encode(array('msg' => FALSE));
+        echo json_encode(array('msg' => FALSE));
     }
     
     public function saveItemInventory()
@@ -91,11 +115,22 @@ class inventario extends Private_Controller
         //$result = true;
         echo json_encode(array('msg' => $result));
     }
+    
+    public function deleteAddon()
+    {
+        if($this->inventario->deleteAddon($this->input->post()))
+        {
+            echo json_encode(array('msg' => TRUE));
+            return;
+        }
+        
+        echo json_encode(array('msg' => FALSE));
+    }
 
-      public function searchAddonByIDActivo()
-      {
-          $result = $this->inventario->getAddonByIDActivo($this->uri->segment(3));
-            //$result = true;
-            echo json_encode(array('msg' => $result));
-      }
+    public function searchAddonByIDActivo()
+    {
+        $result = $this->inventario->getAddonByIDActivo($this->uri->segment(3));
+          //$result = true;
+          echo json_encode(array('msg' => $result));
+    }
 }
