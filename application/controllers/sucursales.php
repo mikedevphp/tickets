@@ -23,7 +23,7 @@ class sucursales extends Private_Controller
 		{
 			redirect('welcome');
 		}
-		
+		//print_r($this->user);
         $data['sucursales'] =$this->clientes_model->getSucursales($this->user->id_cliente);
 		$this->load->view('head'); // head y menu
 		$this->load->view('cliente/sucursales/sucursales_view', $data);

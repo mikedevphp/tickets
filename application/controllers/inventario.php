@@ -41,12 +41,31 @@ class inventario extends Private_Controller
         }
         elseif($this->uri->segment(4) == '')
         {
-        $data['sucursal'] = $this->uri->segment(3);
-        $this->load->view('head');
-        $this->load->view('cliente/sucursales/sucursal_inventario_view',$data);
+            $sucursal_id = $this->uri->segment(3);
+            
+            if($this->inventario->sucursalExists($sucursal_id,$this->user))
+            {
+                $data['sucursal'] = $sucursal_id;
+                $this->load->view('head');
+                $this->load->view('cliente/sucursales/sucursal_inventario_view',$data);
         //echo $this->uri->segment(3);
         
-        $this->load->view('footer');// footer
+                $this->load->view('footer');// footer
+            }
+            else
+            {
+                if($this->user == 3)
+                {
+                    redirect('sucursales');
+                }
+                else
+                {
+                    redirect('clientes');
+                }
+                
+            }
+            
+        
         }
         else
         {
@@ -129,7 +148,7 @@ class inventario extends Private_Controller
 
     public function searchAddonByIDActivo()
     {
-        $result = $this->inventario->getAddonByIDActivo($this->uri->segment(3));
+        $result = $this->inventario->getAddonByIDActivo($this->uri->segment(3),$this->user);
           //$result = true;
           echo json_encode(array('msg' => $result));
     }

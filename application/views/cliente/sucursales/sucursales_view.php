@@ -32,7 +32,72 @@
 </div>
 
 <script src="<?= base_url('css/js/modalsucursales.js') ?>"></script>
- 
+
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+       //alert(); 
+       var ajax;
+       $('#search_placa_activo').val('');
+                       $('#sucursales_placa_activo').empty();
+
+       $('#search_placa_activo').change(function()
+       {
+           
+          
+          var opt = $('option[value="'+$(this).val()+'"]');
+          
+          console.log(opt.attr('id'));
+          
+          if(typeof opt.attr('id') !== 'undefined')
+          {
+          window.location.href = '<?php echo base_url('index.php/inventario/sucursal')?>/'+opt.attr('id');
+          }
+       });
+       
+       $('#search_placa_activo').focus(function()
+       {
+          $(this).val(''); 
+       });
+       
+       $('#search_placa_activo').keypress(function(event)
+       {
+           
+           //alert();
+           console.log(event.which);
+           if(event.which !== 0)
+           {
+            if(typeof ajax !== 'undefined')
+            {
+               // ajax.abort();
+            }
+
+
+            ajax = $.get('<?php echo base_url('index.php/inventario/searchAddonByIDActivo');?>' + '/' +$(this).val(),
+            function(response)
+            {
+                //console.log(response.msg);
+                $('#sucursales_placa_activo').empty();
+                for(var i in response.msg)
+                {
+                    $('#sucursales_placa_activo')
+                            .append('<option id="'+response.msg[i].sucusal_id+'" value="'+response.msg[i].placa_activo+' en '+response.msg[i].sucusal_id+'" />');
+                }
+
+            },'json');
+        }
+       });
+       
+    });
+    
+</script>
+
+ <label for="search_placa_activo">Buscar placa activo</label>
+    <input type="text" class="" value="" id="search_placa_activo" list="sucursales_placa_activo" name="search_placa_activo" />
+    
+    <datalist id="sucursales_placa_activo">
+        
+    </datalist>
 <div class="row-fluid">
     
     <?php
@@ -44,6 +109,7 @@
             echo "<table class ='table table-bordered table-condensed'>
             <thead><tr><th class='alert alert-info'>CR de Tienda</th><th class='alert alert-info'>Nombre de sucursal</th><th class='alert alert-info'>Ciudad</th>
             <th class='alert alert-info'>Fracc/Colonia</th><th class='alert alert-info'>Calle</th><th class='alert alert-info'>Telefono</th><th class='alert alert-info'>Telefono Celular</th>
+            <th class='alert alert-info'>Inventario</th>
             <th class='alert alert-info'>Editar</th><th class='alert alert-info'>Eliminar</th></tr></thead><tbody>";
             
             foreach($sucursales as $row)
@@ -51,6 +117,7 @@
                 echo "<tr><td>".$row->id_sucursal."</td><td>".$row->nombre_sucursal."</td><td>".
                       $row->ciudad_suc."</td><td>".$row->fracc_colonia_suc."</td><td>".
                        $row->direccion."</td><td>".$row->telefono."</td><td>".$row->telefono_cel_suc."</td>
+                       <td><a class='btn-small btn-info'  href=".base_url('index.php/inventario/sucursal/'.$row->id_sucursal)."><i class='icon-eye-open icon-white'></a></td>
                        <td><a class='btn-small btn-warning' href='#modalEditarSucursal' editarsuc='' data-toggle ='modal' numsuc='".$row->id_sucursal."'
                       idcliente='".$row->id_cliente."' empresa='".$row->empresa."' nomsuc='".$row->nombre_sucursal."' ciudadsuc='".$row->ciudad_suc."' 
                        fraccsuc='".$row->fracc_colonia_suc."' callesuc ='".$row->direccion."' 

@@ -38,7 +38,7 @@ class Clientes  extends Private_Controller
 		}
        try
        {
-           
+           //print_r($this->user);
             $uristring = $this->_getOnlyNumbersUri($this->uri->segment(3));
             $uri = (integer) $uristring;
             $data['uri'] = $uri;

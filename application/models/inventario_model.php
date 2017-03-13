@@ -25,6 +25,26 @@ class Inventario_model extends CI_Model
                 ->get()->result();
     }
     
+    public function sucursalExists($sucursal_id, $user)
+    {
+        if($user->id_perfil == 3)
+        {
+            $rows = $this->db->select('*')
+                    ->from('clientes_sucursales_tbl')
+                    ->where('id_sucursal',$sucursal_id)
+                    ->where('id_cliente',$user->id_cliente)
+                    ->get()->result();
+            
+            return (count($rows) > 0) ? TRUE : FALSE;
+        }
+        
+        $rows = $this->db->select('*')
+                ->from('clientes_sucursales_tbl')
+                ->where('id_sucursal',$sucursal_id)
+                    ->get()->result();
+        return (count($rows) > 0) ? TRUE : FALSE;
+    }
+    
     public function getAddonsItems()
     {
         return $this->db->select('*')
@@ -44,8 +64,17 @@ class Inventario_model extends CI_Model
                 ->get()->result();
     }
     
-    public function getAddonByIDActivo($placa)
+    public function getAddonByIDActivo($placa,$user)
     {
+        if($user->id_perfil == 3)
+        {
+            return $this->db->select('*')
+                ->from('inventario_sucursal')
+                ->join('inventario_sucursal_componente isc','isc.inv_id = inventario_sucursal.inv_id')
+                ->join('clientes_sucursales_tbl cs','inventario_sucursal.sucusal_id = cs.id_sucursal')
+                    ->where('cs.id_cliente',$user->id_cliente)
+                ->like('placa_activo',$placa)->get()->result();
+        }
         return $this->db->select('*')
                 ->from('inventario_sucursal_componente isc')
                 ->join('inventario_sucursal','isc.inv_id = inventario_sucursal.inv_id')
