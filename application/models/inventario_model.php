@@ -265,4 +265,56 @@ class Inventario_model extends CI_Model
         
         
     }
+    
+    public function deleteItemById($post)
+    {
+        $this->db->trans_begin();
+        
+        // Actualizmos el articulo con status deleted
+        $this->db->where('inv_id',$post['inv_id'])
+                ->update('inventario_sucursal',array('is_deleted' => 1));
+        
+         // obtenemos los complementos del item que su status no es deleted
+        
+        $addons = $this->db->select('inv_com_id') 
+                ->from('inventario_sucursal_componente')
+                ->where('inv_id',$post['inv_id'])
+                ->where('is_deleted',0)->get()->result();
+        
+        $addons_arr = array();
+        foreach($addons as $addon)
+        {
+            $addons_arr[] = array(
+                                    'inv_id' => $post['inv_id'],
+                                    'inv_com_id' => $addon->inv_com_id,
+                                    'sucursal_id' => $post['sucursal_id'],
+                                    'status_mov' => 'baja',
+                                    'fecha_mov' => date("Y-m-d H:i:s"),
+                                    'comentarios' => $post['comentarios']
+                                    );
+        }
+        
+        // insertamos los movimiento al inventario de los componentes
+        
+        $this->db->insert_batch('inventario_mov',$addons_arr);
+        
+        // Actualizmos los componentes con status deleted
+        $this->db->where('inv_id',$post['inv_id'])
+                ->update('inventario_sucursal_componente',array('is_deleted' => 1));
+        
+        
+        
+        
+        
+        if ($this->db->trans_status() === FALSE)
+        {
+                $this->db->trans_rollback();
+                return FALSE;
+        }
+        else
+        {
+                $this->db->trans_commit();
+                return TRUE;
+        }
+    }
 }

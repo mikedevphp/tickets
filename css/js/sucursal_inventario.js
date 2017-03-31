@@ -78,6 +78,8 @@ $(document).ready(function()
         self.placa_activo = ko.observable(self.addon.placa_activo);
         self.placa_activo_value = ko.observable('');
         self.showEdit = ko.observable(false);
+        self.commentAddonDelete = ko.observable(false);
+        self.commentaddondeletevalue = ko.observable('');
         self.edit = function()
         {
             if(self.showEdit())
@@ -128,9 +130,13 @@ $(document).ready(function()
         self.nombre = ko.observable(self.item.nombre);
         self.descripcion_alt = ko.observable(self.item.descripcion_alt);
         self.descripcion_alt_value = ko.observable(''); 
+        self.is_deleted = ko.observable(self.item.is_deleted);
         self.componente = ko.observableArray();
         self.eye = ko.observable(false);
         self.showEdit = ko.observable(false);
+        // 
+        self.commentDelete = ko.observable(false);
+        self.commentdeletevalue = ko.observable('');
         self.hrefInv = 
                 ko.observable(base_url+'index.php/inventario/sucursal/'+self.sucursal_id()+'/inventarioDetalle/'+self.inv_id());
         self.edit = function()
@@ -139,8 +145,6 @@ $(document).ready(function()
                 
             if(self.showEdit())
             {
-                
-                
                 
                 if(/*confirm('¿Desea guardar los cambios?') && */self.descripcion_alt_value().length > 0)
                 {
@@ -179,7 +183,7 @@ $(document).ready(function()
         self.removeAddon = function(addon)
         {
             console.log(addon.inv_com_id());
-            
+            addon.commentAddonDelete(true);
             if(confirm('¿Quiere eliminar este registro?'))
             {
                 $.post(base_url+'index.php/inventario/deleteAddon/',
@@ -232,6 +236,8 @@ $(document).ready(function()
             {
                 self.componente.push(new addon(response.msg[i]));
             }
+            
+            //console.log(self.componente());
         },'json');
         
     }
@@ -255,9 +261,59 @@ $(document).ready(function()
         self.selectedsAddons()[0] = {id:'0',placa_activo:'',nombre:''};
         self.addAddon = ko.observableArray();
         
+        // baja del articulo completo
         self.removeItem = function(item)
         {
-            self.items.remove(item);
+            //alert();
+            //self.items.remove(item);
+            
+            if(item.commentDelete())
+            {
+                
+                
+                if(item.commentdeletevalue().length > 0)
+                {
+                     if(confirm('¿Desea dar de baja el articulo?'))
+                     {
+                         $.post(base_url+'index.php/Inventario/deleteItem',
+                         {
+                             inv_id : item.inv_id(),
+                             sucursal_id:self.sucursal(),
+                             comentarios : item.commentdeletevalue()
+                             
+                         },function(res)
+                         {
+                             //res = JSON.parse(response);
+                            //console.log(res);
+                            if(res.msg)
+                            {
+                                alert('Se ha dado de baja el articulo.');
+                                window.location.reload();
+                                //self.init();
+                                return;
+                            }
+
+                            alert('Error');
+                            window.location.reload();
+                            return;
+                         },'json');
+                        /*console.log(item.inv_id());
+                        console.log(self.sucursal());
+                        console.log(item.commentdeletevalue());*/
+                     }
+                     
+                 }
+                 item.commentDelete(false);
+                item.commentdeletevalue('');
+            }
+            else
+            {
+                 
+                 
+                item.commentDelete(true);
+            }
+            
+            
         };
         
         self.componente_check.subscribe(function(value)
@@ -414,7 +470,7 @@ $(document).ready(function()
                     self.items.push(new item(items[i]));
                     //console.log(items[i]);
                 }
-                console.log(items);
+                console.log(self.items());
                 
                 //self.componente_check(0);
             });

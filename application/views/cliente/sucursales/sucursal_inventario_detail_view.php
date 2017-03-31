@@ -39,7 +39,7 @@
                 <td><?php echo $row->componente;?></td>
                 <td><?php echo $row->placa_activo;?></td>
                 <td><?php echo $row->status_mov;?></td>
-                <td><?php echo $row->fecha_mov;?></td>
+                <td><?php echo date('d/m/Y H:i',strtotime($row->fecha_mov));?></td>
                 <td><?php echo $row->comentarios;?></td>
                 </tr>
                 <?php

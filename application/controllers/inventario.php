@@ -152,4 +152,17 @@ class inventario extends Private_Controller
           //$result = true;
           echo json_encode(array('msg' => $result));
     }
+    
+    public function deleteItem()
+    {
+        if($this->inventario->deleteItemById($this->input->post()))
+        {
+            echo json_encode(array('msg' => TRUE));
+            return;
+        }
+        
+        echo json_encode(array('msg' => FALSE));
+        
+        //print_r($this->input->post());
+    }
 }

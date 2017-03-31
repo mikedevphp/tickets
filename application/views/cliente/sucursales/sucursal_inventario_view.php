@@ -84,6 +84,24 @@
     background-color: #fefefe;
     color: black;
 }
+
+/*table {
+    border-collapse: collapse;
+}
+
+td {
+    position: relative;
+    padding: 5px 10px;
+}
+
+tr.strikeout td:before {
+    content: " ";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    border-bottom: 1px solid #111;
+    width: 100%;
+}*/
 </style>
 <script type="text/javascript" src="<?php echo base_url('css/js/knockout-3.3.0.js')?>"></script>
 <script type="text/javascript" src="<?php echo base_url('css/js/sucursal_inventario.js')?>"></script>
@@ -172,53 +190,110 @@
             
             <!-- Edit Componente -->
             <script type="text/html" id="edit-componente-template">
+                <li>
             <label>Componente : <span data-bind="text: (nombre() == null) ? 'S/N' : nombre"></span></label>
+                </li>
+                <li>
              <label> N° de Placa :<span data-bind="text: placa_activo, visible: !showEdit()"></span> </label>
              <input type="text" data-bind="value: placa_activo_value, visible: showEdit()" class="input-medium"/>
-             </script>                            
-                <table class="table table-striped table-hover">
+                </li>
+             </script>    
+            <!-- Comment Delete --> 
+            <script type="text/html" id="delete_comment-template">
+            <button data-bind="click: $parent.removeItem, visible: (is_deleted() == '0') ? true : false"  class="btn btn-xs btn-danger">
+                <i class="icon-trash icon-white"></i>
+            </button> 
+             </script>
+             
+             
+             
+             <table class="table table-striped" >
                     <thead>
                     <th>Articulo</th>
                     <th>Descripcion</th>
                     <th></th>
                     <th></th>
                     <th></th>
-                    </thead>
+                    <th></th>
+                    </thead>  
                     <tbody data-bind="foreach: items">
-                         <tr>
+                        <tr data-bind="css: (is_deleted() != '0') ? 'warning' : ''">
                              <td data-bind="text: nombre"></td>
                              <td data-bind="template: {name:'description-template',data: $data}"></td>
-                             <td><button data-bind="click: showDetail" title="Mostrar componentes" class="btn btn-xs btn-success"><i class="icon-eye-close icon-white"></i></button></td>
-                             <td><button  class="btn btn-xs btn-info" title="Editar articulo" data-bind="click: edit"><i class="icon-pencil icon-white" ></i></button></td>
-                             <td><button data-bind="click: $parent.removeItem"  class="btn btn-xs btn-danger"><i class="icon-trash icon-white"></i></button></td>
+                             <td><button data-bind="click: showDetail, visible: (is_deleted() == '0') ? true : false" title="Mostrar componentes" class="btn btn-xs btn-success"><i class="icon-eye-close icon-white"></i></button></td>
+                             <td><button  class="btn btn-xs btn-info" title="Editar articulo" data-bind="click: edit, visible: (is_deleted() == '0') ? true : false"><i class="icon-pencil icon-white" ></i></button></td>
+                             <td data-bind="template: 
+                                    {
+                                        name:'delete_comment-template',
+                                        params: 
+                                                { 
+                                                    data: $data ,
+                                            // pasamos el contexto
+                                                    context: $context
+                                                }
+                                    }"></td>
                              <td><a title="Detalles del inventario" data-bind="attr:{'href':hrefInv()}" class="btn btn-xs"><i class="icon-th-list"></i></a></td>
                          </tr>
-                         <tr data-bind="visible: eye">
-                             <td>
-                                 <small>Componentes</small>
-                                 <button data-bind="click: addAddon" class="btn btn-mini btn-success">+</button>
+                         <tr  data-bind="visible: commentDelete">
+                             <td></td>
+                             <td></td>
+                             <td></td>
+                             <td colspan="3">
+                                 <textarea data-bind="value: commentdeletevalue" style="resize:none;" cols="25" rows="3"></textarea>
                              </td>
-                             <td>
-                                 <ol style="list-style-type:none;" data-bind="foreach: componente">
-                                     <li>
+                            
+                         </tr>
+                         <tr data-bind="visible: eye" >
+                             
+                         </tr>
+                    
+                         <tr data-bind="visible: eye">
+                        <td >
+                                 <small>Agregar</small>
+                                 <button data-bind="click:addAddon" class="btn btn-mini btn-success">+</button>
+                            </td> 
+                             <td colspan="5">
+                         
+                            <div data-bind="foreach: componente">
+                                 
+                                 <ol style="list-style-type:none;" data-bind="">
+                                     
                                          <div data-bind="template: {name:'edit-componente-template',data: $data}"></div>
-                                         <button data-bind="click:edit" class="btn btn-mini btn-info"><i class="icon-pencil icon-white" ></i></button>
-                                         <button data-bind="click:$parent.removeAddon" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i></button>
+                                         <li>
+                                       <button data-bind="click:edit" class="btn btn-mini btn-info">
+                                           <i class="icon-pencil icon-white" ></i></button>
+                                           
+                                    <button data-bind="click:$parent.removeAddon" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i></button>
+                                         </li>
+                                         <li style="margin-top:10px;">
+                                    <textarea data-bind="value: commentaddondeletevalue, visible: commentAddonDelete()" style="resize:none;" cols="25" rows="2"></textarea>  
+                                           </li>
+                                     
+                                     
                                         
-                                     </li>
+                                    </ol>
+                            </div>  
                                 
-                                </ol>
+                        </td>
+                        
+                             
+                             <!--<td>
+                                 
                              </td>
                              <td>
                                  
                              </td>
                              <td></td>
-                             <td></td>
-                             <td></td>
+                             <td></td>-->
+                       
                          </tr>
+                    
                      </tbody>
                 </table>
-            
+             
+            <table>
+  
+</table>
          <hr>
          
         </div>
