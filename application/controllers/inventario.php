@@ -78,6 +78,7 @@ class inventario extends Private_Controller
     {
         $this->load->view('head');
         //echo $sucursal;
+        $data['sucursal'] = $sucursal;
         $data['rows'] = $this->inventario->getInventoryByItemId($sucursal,$inv_id);
         $this->load->view('cliente/sucursales/sucursal_inventario_detail_view',$data);
         //print_r($data);
@@ -138,6 +139,19 @@ class inventario extends Private_Controller
     public function deleteAddon()
     {
         if($this->inventario->deleteAddon($this->input->post()))
+        {
+            echo json_encode(array('msg' => TRUE));
+            return;
+        }
+        
+        echo json_encode(array('msg' => FALSE));
+    }
+    
+    public function addAddon()
+    {
+        //print_r($this->input->post());
+        
+        if($this->inventario->addAddon($this->input->post()))
         {
             echo json_encode(array('msg' => TRUE));
             return;

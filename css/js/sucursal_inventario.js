@@ -67,10 +67,12 @@ $(document).ready(function()
     
     
     
-    function addon(addon)
+    function addon(addon,add)
     {
         var self = this;
         self.addon = addon;
+        self.is_add = ko.observable(add);
+        self.articulo_id = ko.observable(self.addon.articulo_id);
         self.nombre = ko.observable(self.addon.nombre);
         self.inv_id = ko.observable(self.addon.inv_id);
         self.sucursal_id = ko.observable(self.addon.sucusal_id);
@@ -80,6 +82,8 @@ $(document).ready(function()
         self.showEdit = ko.observable(false);
         self.commentAddonDelete = ko.observable(false);
         self.commentaddondeletevalue = ko.observable('');
+        self.selectedAddon = ko.observable();
+        self.commentaddonaddvalue = ko.observable();
         self.edit = function()
         {
             if(self.showEdit())
@@ -113,6 +117,39 @@ $(document).ready(function()
             self.placa_activo_value('');
         };
         
+        self.add = function()
+        {
+            //addonsType.push({});
+            if(self.placa_activo_value().length > 0)
+            {
+                if(confirm('¿Desea agregar este registro?'))
+                {
+                    $.post(base_url+'index.php/inventario/addAddon',
+                    {
+                        inv_id : self.inv_id(),
+                        placa_activo:self.placa_activo_value(),
+                        articulo_id : self.articulo_id(),
+                        componente_id : self.selectedAddon(),
+                        sucursal_id : self.sucursal_id(),
+                        comentarios: self.commentaddonaddvalue()
+                    },
+                    function(response)
+                    {
+                        if(response.msg)
+                        {
+                            
+                            alert('Se ha agregado el registro.');
+                            window.location.reload();
+                            return;
+                        }
+                        alert('Error');
+                        window.location.reload();
+                        return;
+                    },'json');
+                }
+            }
+        };
+        
         //self.id = id;
         //self.nombre = nombre;
     }
@@ -134,6 +171,7 @@ $(document).ready(function()
         self.componente = ko.observableArray();
         self.eye = ko.observable(false);
         self.showEdit = ko.observable(false);
+        
         // 
         self.commentDelete = ko.observable(false);
         self.commentdeletevalue = ko.observable('');
@@ -182,35 +220,66 @@ $(document).ready(function()
         
         self.removeAddon = function(addon)
         {
-            console.log(addon.inv_com_id());
-            addon.commentAddonDelete(true);
-            if(confirm('¿Quiere eliminar este registro?'))
+            //console.log(addon.inv_com_id());
+            //addon.commentAddonDelete(true);
+            if(addon.is_add())
             {
-                $.post(base_url+'index.php/inventario/deleteAddon/',
-                {
-                    inv_id : addon.inv_id(),
-                    sucursal_id:addon.sucursal_id(),
-                    inv_com_id: addon.inv_com_id()
-                    
-                },
-                function(response)
-                {
-                    //console.log(response);
-                    if(response.msg)
-                    {
-                        self.componente.remove(addon);
-                    }
-                    
-                },'json');
-                
-                
+                self.componente.remove(addon);
+                return;
             }
+            if(addon.commentAddonDelete())
+            {
+                if(addon.commentaddondeletevalue().length > 0)
+                {
+                    if(confirm('¿Quiere eliminar este registro?'))
+                    {
+                        $.post(base_url+'index.php/inventario/deleteAddon/',
+                        {
+                            inv_id : addon.inv_id(),
+                            sucursal_id:addon.sucursal_id(),
+                            inv_com_id: addon.inv_com_id(),
+                            comentarios:addon.commentaddondeletevalue()
+                    
+                        },
+                        function(response)
+                        {
+                            //console.log(response);
+                            if(response.msg)
+                            {
+                                self.componente.remove(addon);
+                                alert('Se ha dado de baja el registro.');
+                                window.location.reload();
+                            }
+                            alert('Error');
+                            window.location.reload();
+                            return;
+                        },'json');
+                
+                
+                    }
+                }
+                addon.commentAddonDelete(false);
+                addon.commentaddondeletevalue('');
+            }
+            
+            else
+            {
+                 
+                 
+                addon.commentAddonDelete(true);
+            }
+                
+            
             
         };
         
         self.addAddon = function()
         {
-            self.componente.push(new addon({}));
+            self.componente.push(new addon({
+                                            articulo_id : self.articulo_id(),
+                                            inv_id : self.inv_id(),
+                                            sucusal_id : self.sucursal_id()
+                                        },true));
         };
         
         
@@ -234,10 +303,11 @@ $(document).ready(function()
         {
             for(var i in response.msg)
             {
-                self.componente.push(new addon(response.msg[i]));
+                console.log(response.msg[i]);
+                self.componente.push(new addon(response.msg[i],false));
             }
             
-            //console.log(self.componente());
+           // console.log(self.componente());
         },'json');
         
     }
@@ -451,7 +521,7 @@ $(document).ready(function()
                 {
                     self.itemType.push(itemsTypes[i]);
                 }
-                
+                self.addonsType.push({componente_id:'0',descripcion:'',nombre:''});
                 for(var i in addonsType)
                 {
                     self.addonsType.push(addonsType[i]);
@@ -468,9 +538,9 @@ $(document).ready(function()
                         console.log(items[i]);
                     }*/
                     self.items.push(new item(items[i]));
-                    //console.log(items[i]);
+                    console.log(items[i]);
                 }
-                console.log(self.items());
+                //console.log(self.items());
                 
                 //self.componente_check(0);
             });

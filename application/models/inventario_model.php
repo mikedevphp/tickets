@@ -93,6 +93,36 @@ class Inventario_model extends CI_Model
                 ->update('inventario_sucursal_componente',array('placa_activo' => $addon['placa_activo']));
     }
     
+    public function addAddon($addon)
+    {
+        $this->db->trans_begin();
+        
+        $this->db->insert('inventario_sucursal_componente',array(
+                                                            'inv_id' => $addon['inv_id'],
+                                                            'placa_activo' => empty($addon['placa_activo']) ? 0 : $addon['placa_activo'],
+                                                            'articulo_id' => $addon['articulo_id'],
+                                                            'componente_id' => $addon['componente_id']));
+        $inv_com_id = $this->db->insert_id();
+        
+        $this->db->insert('inventario_mov',array(
+                                                'inv_id' => $addon['inv_id'],
+                                                'inv_com_id' => $inv_com_id,
+                                                'sucursal_id' => $addon['sucursal_id'],
+                                                'status_mov' => 'alta',
+                                                'fecha_mov' => date("Y-m-d H:i:s"),
+                                                'comentarios' => $addon['comentarios']));
+        if ($this->db->trans_status() === FALSE)
+        {
+                $this->db->trans_rollback();
+                return FALSE;
+        }
+        else
+        {
+                $this->db->trans_commit();
+                return TRUE;
+        }
+    }
+    
     public function deleteAddon($addon)
     {
         $this->db->trans_begin();
@@ -106,7 +136,7 @@ class Inventario_model extends CI_Model
                                                         'sucursal_id' =>$addon['sucursal_id'],
                                                         'inv_com_id' =>$addon['inv_com_id'],
                                                         'status_mov' =>'baja',
-                                                        'comentarios' => 'Se dio de baja el componente',
+                                                        'comentarios' => $addon['comentarios'],
                                                         'fecha_mov' =>date("Y-m-d H:i:s")
                                                 )
                 );

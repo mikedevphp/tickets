@@ -191,11 +191,20 @@ tr.strikeout td:before {
             <!-- Edit Componente -->
             <script type="text/html" id="edit-componente-template">
                 <li>
-            <label>Componente : <span data-bind="text: (nombre() == null) ? 'S/N' : nombre"></span></label>
+                    <label>Componente : 
+                        <span data-bind="text: (nombre() == null) ? 'S/N' : nombre,visible: !is_add()"></span>
+                        <select data-bind="options: $root.addonsType, 
+                                  optionsText:'nombre',optionsValue:'componente_id',value: selectedAddon,visible:is_add()" class="input-medium"></select>
+                    </label>
                 </li>
                 <li>
              <label> N° de Placa :<span data-bind="text: placa_activo, visible: !showEdit()"></span> </label>
-             <input type="text" data-bind="value: placa_activo_value, visible: showEdit()" class="input-medium"/>
+             <input type="text" data-bind="value: placa_activo_value, visible: showEdit() || is_add()" class="input-medium"/>
+                </li>
+                
+                <li data-bind="visible:is_add()">
+                    <label> Comentarios: </label> 
+                    <textarea data-bind="value: commentaddonaddvalue" style="resize:none;" cols="25" rows="2"></textarea>
                 </li>
              </script>    
             <!-- Comment Delete --> 
@@ -260,10 +269,16 @@ tr.strikeout td:before {
                                      
                                          <div data-bind="template: {name:'edit-componente-template',data: $data}"></div>
                                          <li>
-                                       <button data-bind="click:edit" class="btn btn-mini btn-info">
+                                       <button data-bind="click:edit,visible:!is_add()" class="btn btn-mini btn-info">
                                            <i class="icon-pencil icon-white" ></i></button>
-                                           
-                                    <button data-bind="click:$parent.removeAddon" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i></button>
+                                         
+                                        <button data-bind="click:add,visible:is_add()" class="btn btn-mini btn-success">
+                                            <i class="icon-plus icon-white"></i>
+                                        </button>  
+                                        <button data-bind="click:$parent.removeAddon" class="btn btn-mini btn-danger">
+                                            <i class="icon-trash icon-white"></i>
+                                        </button>
+                                        
                                          </li>
                                          <li style="margin-top:10px;">
                                     <textarea data-bind="value: commentaddondeletevalue, visible: commentAddonDelete()" style="resize:none;" cols="25" rows="2"></textarea>  
